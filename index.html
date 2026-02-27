@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plans</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Inter,system-ui,Arial}
+body{background:#05070d;color:#fff;display:flex;justify-content:center;align-items:center;min-height:100vh}
+.container{width:1200px;max-width:95%;text-align:center}
+.title{font-size:28px;margin-bottom:30px;color:#bfc7ff}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:22px}
+.card{background:#0b0f1a;border:1px solid #1b2236;border-radius:16px;padding:26px;display:flex;flex-direction:column;justify-content:space-between;transition:.25s}
+.card:hover{transform:translateY(-4px);border-color:#5b6cff}
+.plan{font-size:20px;margin-bottom:10px}
+.price{font-size:32px;font-weight:700;margin-bottom:18px}
+.price span{font-size:14px;color:#9aa3c7}
+.features{list-style:none;text-align:left;margin-bottom:22px}
+.features li{margin-bottom:8px;color:#cfd6ff;font-size:14px}
+.btn{background:#12182a;border:1px solid #2a3355;color:#fff;padding:12px;border-radius:10px;cursor:pointer;font-weight:600;transition:.2s}
+.btn:hover{background:#5b6cff;border-color:#5b6cff}
+.highlight{border:2px solid #5b6cff}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="title">Powerful, Reliable, and Affordable Minecraft Hosting</div>
+<div class="grid">
+
+<div class="card">
+<div>
+<div class="plan">Starter</div>
+<div class="price">$1 <span>/mo</span></div>
+<ul class="features">
+<li>1GB RAM</li>
+<li>Advanced DDoS Protection</li>
+</ul>
+</div>
+<button class="btn">Choose Plan</button>
+</div>
+
+<div class="card">
+<div>
+<div class="plan">Starter Plus</div>
+<div class="price">$2.5 <span>/mo</span></div>
+<ul class="features">
+<li>2GB RAM</li>
+<li>Support</li>
+<li>Advanced DDoS Protection</li>
+</ul>
+</div>
+<button class="btn">Choose Plan</button>
+</div>
+
+<div class="card highlight">
+<div>
+<div class="plan">Pro</div>
+<div class="price">$5.5 <span>/mo</span></div>
+<ul class="features">
+<li>6GB RAM</li>
+<li>Daily Backup</li>
+<li>Priority Support</li>
+<li>Advanced DDoS Protection</li>
+</ul>
+</div>
+<button class="btn">Choose Plan</button>
+</div>
+
+<div class="card">
+<div>
+<div class="plan">Pro+</div>
+<div class="price">$7.5 <span>/mo</span></div>
+<ul class="features">
+<li>8GB RAM</li>
+<li>Daily Backup</li>
+<li>Unlimited Slots</li>
+<li>Priority Support</li>
+<li>Advanced DDoS Protection</li>
+</ul>
+</div>
+<button class="btn">Choose Plan</button>
+</div>
+
+<div class="card">
+<div>
+<div class="plan">Elite</div>
+<div class="price">$11.5 <span>/mo</span></div>
+<ul class="features">
+<li>12GB RAM</li>
+<li>Daily Backup</li>
+<li>Priority Support</li>
+<li>Dedicated IP</li>
+<li>Advanced DDoS Protection</li>
+</ul>
+</div>
+<button class="btn">Choose Plan</button>
+</div>
+
+<div class="card">
+<div>
+<div class="plan">Ultimate</div>
+<div class="price">$15.5 <span>/mo</span></div>
+<ul class="features">
+<li>16GB RAM</li>
+<li>Daily Backup</li>
+<li>Dedicated IP</li>
+<li>24/7 Support</li>
+<li>Advanced DDoS Protection</li>
+</ul>
+</div>
+<button class="btn">Choose Plan</button>
+</div>
+
+</div>
+</div>
+</body>
+</html>
