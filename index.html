@@ -1,27 +1,389 @@
-import { useState, useEffect, useRef } from "react";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LightCitySMP Store — Season 4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════
+   LIGHTCITYSMP STORE — CSS
+   ═══════════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-// ═══════════════════════════════════════════════════════════════
-// ██  LIGHTCITYSMP STORE CONFIG — Edit ranks here!  ██
-// ═══════════════════════════════════════════════════════════════
+:root {
+  --iron: #B0B0B0;
+  --gold: #FFD700;
+  --diamond: #4FC3F7;
+  --bg-dark: #070B14;
+  --bg-card: rgba(15, 20, 35, 0.85);
+}
+
+body {
+  background: linear-gradient(180deg, #070B14 0%, #0D1225 30%, #0A0F1E 70%, #070B14 100%);
+  color: #fff;
+  font-family: 'Chakra Petch', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #0a0e1a; }
+::-webkit-scrollbar-thumb { background: #1a2040; border-radius: 3px; }
+
+/* PARTICLES CANVAS */
+#particles {
+  position: fixed; top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none; z-index: 1;
+}
+
+/* BG BLOBS */
+.bg-blob {
+  position: fixed; pointer-events: none; border-radius: 50%;
+}
+.bg-blob-1 {
+  top: -30%; left: -10%; width: 50%; height: 60%;
+  background: radial-gradient(ellipse, rgba(79,195,247,0.03) 0%, transparent 70%);
+}
+.bg-blob-2 {
+  bottom: -20%; right: -10%; width: 50%; height: 50%;
+  background: radial-gradient(ellipse, rgba(255,215,0,0.02) 0%, transparent 70%);
+}
+
+/* NAV */
+nav {
+  position: relative; z-index: 10;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 20px 40px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  backdrop-filter: blur(10px);
+}
+.nav-brand {
+  display: flex; align-items: center; gap: 12px;
+}
+.nav-logo {
+  width: 36px; height: 36px; border-radius: 8px;
+  background: linear-gradient(135deg, #4FC3F7, #FFD700);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+.nav-title {
+  font-family: 'Exo 2', sans-serif;
+  font-size: 18px; font-weight: 800;
+  letter-spacing: 2px; text-transform: uppercase;
+}
+.nav-season {
+  font-size: 11px; color: #4FC3F7;
+  background: rgba(79,195,247,0.1);
+  padding: 3px 10px; border-radius: 20px;
+  font-weight: 600; letter-spacing: 1px;
+}
+.nav-discord {
+  font-size: 13px; color: rgba(255,255,255,0.5);
+  text-decoration: none; padding: 8px 20px;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px; transition: all 0.3s;
+}
+.nav-discord:hover {
+  border-color: rgba(255,255,255,0.2); color: #fff;
+}
+
+/* HERO */
+.hero {
+  position: relative; z-index: 5;
+  text-align: center; padding: 80px 20px 20px;
+}
+.hero-label {
+  font-size: 12px; font-weight: 600; color: #4FC3F7;
+  text-transform: uppercase; letter-spacing: 6px; margin-bottom: 20px;
+  animation: fadeSlideUp 0.6s ease both;
+}
+.hero-title {
+  font-family: 'Exo 2', sans-serif;
+  font-size: clamp(36px, 6vw, 72px);
+  font-weight: 900; line-height: 1.1;
+  text-transform: uppercase; letter-spacing: 4px;
+  background: linear-gradient(135deg, #fff 30%, #4FC3F7 70%, #FFD700);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: fadeSlideUp 0.6s ease 0.1s both, glow 3s ease-in-out infinite;
+}
+.hero-sub {
+  font-size: 16px; color: rgba(255,255,255,0.4);
+  max-width: 480px; margin: 16px auto 0; line-height: 1.6;
+  animation: fadeSlideUp 0.6s ease 0.2s both;
+}
+
+/* CARDS GRID */
+.cards-grid {
+  position: relative; z-index: 5;
+  display: flex; flex-wrap: wrap; justify-content: center;
+  gap: 24px; padding: 50px 24px 80px;
+  max-width: 1300px; margin: 0 auto;
+}
+
+/* RANK CARD */
+.rank-card {
+  position: relative; display: flex; flex-direction: column;
+  background: var(--bg-card);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px; overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  flex: 1 1 320px; max-width: 400px; min-width: 280px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  opacity: 0; animation: fadeSlideUp 0.6s ease forwards;
+}
+.rank-card:nth-child(1) { animation-delay: 0s; }
+.rank-card:nth-child(2) { animation-delay: 0.15s; }
+.rank-card:nth-child(3) { animation-delay: 0.3s; }
+.rank-card:nth-child(4) { animation-delay: 0.45s; }
+.rank-card:nth-child(5) { animation-delay: 0.6s; }
+.rank-card:nth-child(6) { animation-delay: 0.75s; }
+
+.rank-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+.rank-card.is-popular {
+  border-color: var(--accent);
+}
+
+/* Popular badge */
+.popular-badge {
+  position: absolute; top: 16px; right: -30px;
+  background: var(--accent); color: #000;
+  font-size: 11px; font-weight: 700;
+  padding: 4px 36px; transform: rotate(45deg);
+  font-family: 'Chakra Petch', sans-serif;
+  text-transform: uppercase; letter-spacing: 1.5px; z-index: 2;
+}
+
+/* Top glow */
+.card-glow {
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0.5; transition: opacity 0.3s;
+}
+.rank-card:hover .card-glow { opacity: 1; }
+
+/* Card header */
+.card-header {
+  padding: 32px 28px 0; text-align: center;
+}
+.card-icon {
+  font-size: 48px; margin-bottom: 12px;
+  transition: filter 0.3s;
+}
+.card-icon img { width: 48px; height: 48px; object-fit: contain; }
+.rank-card:hover .card-icon {
+  filter: drop-shadow(0 0 12px var(--accent-alpha));
+}
+.card-name {
+  font-family: 'Exo 2', sans-serif;
+  font-size: 26px; font-weight: 800;
+  color: var(--accent); text-transform: uppercase; letter-spacing: 3px;
+}
+.card-desc {
+  color: rgba(255,255,255,0.5); font-size: 13px;
+  line-height: 1.6; margin-top: 10px; min-height: 40px;
+}
+
+/* Price */
+.card-price {
+  text-align: center; padding: 20px 28px;
+}
+.price-amount {
+  font-family: 'Exo 2', sans-serif;
+  font-size: 42px; font-weight: 900; color: #fff; letter-spacing: -1px;
+}
+.price-currency {
+  font-size: 14px; color: rgba(255,255,255,0.35); margin-left: 4px;
+}
+
+/* Divider */
+.card-divider {
+  height: 1px; margin: 0 28px;
+  background: linear-gradient(90deg, transparent, var(--accent-dim), transparent);
+}
+
+/* Features */
+.card-features {
+  padding: 20px 28px; flex: 1;
+}
+.feature-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  margin-bottom: 10px; font-size: 13.5px;
+  color: rgba(255,255,255,0.7); line-height: 1.4;
+}
+.feature-dot {
+  color: var(--accent); font-size: 14px; flex-shrink: 0; margin-top: 1px;
+}
+
+/* Button */
+.card-btn-wrap { padding: 0 28px 28px; }
+.card-btn {
+  width: 100%; padding: 14px 0;
+  border-radius: 10px;
+  font-family: 'Exo 2', sans-serif;
+  font-size: 15px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 2px;
+  cursor: pointer; transition: all 0.3s; border: none;
+}
+.card-btn.outline {
+  background: transparent;
+  border: 1.5px solid var(--accent-dim);
+  color: var(--accent);
+}
+.card-btn.outline:hover {
+  background: rgba(255,255,255,0.04);
+}
+.card-btn.filled {
+  background: linear-gradient(135deg, var(--accent), var(--accent-cc));
+  color: #000;
+  box-shadow: 0 4px 20px var(--accent-shadow);
+}
+
+/* HOW IT WORKS */
+.how-section {
+  position: relative; z-index: 5;
+  max-width: 700px; margin: 0 auto;
+  padding: 0 24px 100px; text-align: center;
+}
+.section-line {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+  margin-bottom: 60px;
+}
+.section-title {
+  font-family: 'Exo 2', sans-serif;
+  font-size: 22px; font-weight: 700; margin-bottom: 20px;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: rgba(255,255,255,0.8);
+}
+.step {
+  display: flex; align-items: center; gap: 20px;
+  padding: 16px 0; text-align: left;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+.step-num {
+  font-family: 'Exo 2', sans-serif;
+  font-size: 28px; font-weight: 900;
+  color: rgba(79,195,247,0.15); min-width: 50px;
+}
+.step-title {
+  font-family: 'Exo 2', sans-serif;
+  font-weight: 700; font-size: 15px;
+  color: rgba(255,255,255,0.85); margin-bottom: 2px;
+}
+.step-desc {
+  font-size: 13px; color: rgba(255,255,255,0.35);
+}
+
+/* FOOTER */
+footer {
+  position: relative; z-index: 5;
+  border-top: 1px solid rgba(255,255,255,0.04);
+  padding: 24px 40px;
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 12px; color: rgba(255,255,255,0.25);
+}
+
+/* ANIMATIONS */
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes glow {
+  0%, 100% { text-shadow: 0 0 20px rgba(79,195,247,0.3), 0 0 40px rgba(79,195,247,0.1); }
+  50% { text-shadow: 0 0 30px rgba(79,195,247,0.5), 0 0 60px rgba(79,195,247,0.2); }
+}
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+  nav { padding: 16px 20px; }
+  .nav-title { font-size: 14px; }
+  .hero { padding: 50px 16px 10px; }
+  .cards-grid { padding: 30px 16px 60px; }
+  footer { flex-direction: column; gap: 8px; text-align: center; padding: 20px; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-blob bg-blob-1"></div>
+<div class="bg-blob bg-blob-2"></div>
+<canvas id="particles"></canvas>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">
+    <div class="nav-logo">⚡</div>
+    <span class="nav-title" id="navServerName"></span>
+    <span class="nav-season" id="navSeason"></span>
+  </div>
+  <a href="#" class="nav-discord" id="navDiscord">Discord</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-label">Official Store</div>
+  <h1 class="hero-title">Choose Your Rank</h1>
+  <p class="hero-sub" id="heroTagline"></p>
+</div>
+
+<!-- RANK CARDS -->
+<div class="cards-grid" id="cardsGrid"></div>
+
+<!-- HOW IT WORKS -->
+<div class="how-section">
+  <div class="section-line"></div>
+  <h2 class="section-title">How It Works</h2>
+  <div class="step">
+    <span class="step-num">01</span>
+    <div><div class="step-title">Choose your rank</div><div class="step-desc">Pick the rank that fits your playstyle</div></div>
+  </div>
+  <div class="step">
+    <span class="step-num">02</span>
+    <div><div class="step-title">Complete payment</div><div class="step-desc">Secure checkout via our payment provider</div></div>
+  </div>
+  <div class="step">
+    <span class="step-num">03</span>
+    <div><div class="step-title">Get your perks</div><div class="step-desc">Rank applied automatically — start playing!</div></div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <span id="footerCopy"></span>
+  <span>Not affiliated with Mojang Studios</span>
+</footer>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════
+// ██  LIGHTCITYSMP STORE CONFIG 
+// ═══════════════════════════════════════════════════════════════════
 const STORE_CONFIG = {
   serverName: "LightCitySMP",
   season: "Season 4",
   tagline: "Power up your survival experience",
-  discordLink: "#", // Replace with your Discord link
-  // Add your server IP or store URL here
-  storeUrl: "#",
+  discordLink: "#",           // Replace with your Discord invite link
+  storeUrl: "#",              // Replace with your store/checkout URL
 
-  // ── RANKS ──────────────────────────────────────
-  // Add, remove, or edit ranks below.
-  // icon: use any emoji or paste an image URL
-  // features: array of perks included in the rank
-  // color: hex color for the rank's accent
-  // popular: set ONE rank to true to highlight it
+  // ── RANKS ──────────────────────────────────────────────────────
+  // To add a new rank: copy one of the objects below and edit it.
+  // icon: use any emoji OR an image URL like "https://example.com/icon.png"
+  // color: hex color for the rank's accent theme
+  // popular: set ONE rank to true to give it the "Popular" ribbon
+  // features: array of perk strings
   ranks: [
     {
       id: "iron",
       name: "Iron",
-      icon: "⛏️",
+      icon: "⛏️",                         // emoji or image URL
       price: 4.99,
       color: "#B0B0B0",
       popular: false,
@@ -72,614 +434,122 @@ const STORE_CONFIG = {
         "Priority support",
       ],
     },
+    // ── ADD MORE RANKS BELOW ──────────────────────────────────
+    // {
+    //   id: "emerald",
+    //   name: "Emerald",
+    //   icon: "🟢",               // or "https://yoursite.com/emerald.png"
+    //   price: 29.99,
+    //   color: "#2ECC71",
+    //   popular: false,
+    //   description: "Your description here.",
+    //   features: ["Perk 1", "Perk 2", "Perk 3"],
+    // },
   ],
 };
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════
 
-const FONT_URL =
-  "https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600;700;800;900&display=swap";
 
-// Particle component
-function Particles() {
-  const canvasRef = useRef(null);
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    let animId;
-    let particles = [];
-    const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-    resize();
-    window.addEventListener("resize", resize);
+// ── RENDER ──────────────────────────────────────────────────────
+(function init() {
+  document.getElementById("navServerName").textContent = STORE_CONFIG.serverName;
+  document.getElementById("navSeason").textContent = STORE_CONFIG.season;
+  document.getElementById("heroTagline").textContent = STORE_CONFIG.tagline;
+  document.getElementById("navDiscord").href = STORE_CONFIG.discordLink;
+  document.getElementById("footerCopy").textContent = `© ${new Date().getFullYear()} ${STORE_CONFIG.serverName}.`;
 
-    for (let i = 0; i < 60; i++) {
-      particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        size: Math.random() * 2 + 0.5,
-        speedY: -(Math.random() * 0.3 + 0.1),
-        speedX: (Math.random() - 0.5) * 0.2,
-        opacity: Math.random() * 0.5 + 0.1,
-      });
-    }
+  const grid = document.getElementById("cardsGrid");
+  STORE_CONFIG.ranks.forEach((rank) => {
+    grid.appendChild(createRankCard(rank));
+  });
 
-    const draw = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particles.forEach((p) => {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(79, 195, 247, ${p.opacity})`;
-        ctx.fill();
-        p.x += p.speedX;
-        p.y += p.speedY;
-        if (p.y < -10) {
-          p.y = canvas.height + 10;
-          p.x = Math.random() * canvas.width;
-        }
-      });
-      animId = requestAnimationFrame(draw);
-    };
-    draw();
-    return () => {
-      cancelAnimationFrame(animId);
-      window.removeEventListener("resize", resize);
-    };
-  }, []);
-  return (
-    <canvas
-      ref={canvasRef}
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100%",
-        height: "100%",
-        pointerEvents: "none",
-        zIndex: 1,
-      }}
-    />
-  );
-}
+  initParticles();
+})();
 
-// Rank card
-function RankCard({ rank, index }) {
-  const [hovered, setHovered] = useState(false);
+function createRankCard(rank) {
+  const card = document.createElement("div");
+  card.className = "rank-card" + (rank.popular ? " is-popular" : "");
+  card.style.setProperty("--accent", rank.color);
+  card.style.setProperty("--accent-cc", rank.color + "CC");
+  card.style.setProperty("--accent-dim", rank.color + "88");
+  card.style.setProperty("--accent-shadow", rank.color + "44");
+  card.style.setProperty("--accent-alpha", rank.color + "88");
 
-  return (
-    <div
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        position: "relative",
-        display: "flex",
-        flexDirection: "column",
-        background: "rgba(15, 20, 35, 0.85)",
-        border: `1px solid ${rank.popular ? rank.color : "rgba(255,255,255,0.06)"}`,
-        borderRadius: 16,
-        padding: "0",
-        overflow: "hidden",
-        transition: "all 0.4s cubic-bezier(0.23, 1, 0.32, 1)",
-        transform: hovered ? "translateY(-8px) scale(1.02)" : "translateY(0) scale(1)",
-        boxShadow: hovered
-          ? `0 20px 60px rgba(0,0,0,0.5), 0 0 40px ${rank.color}22`
-          : "0 4px 20px rgba(0,0,0,0.3)",
-        animation: `fadeSlideUp 0.6s ease ${index * 0.15}s both`,
-        flex: "1 1 320px",
-        maxWidth: 400,
-        minWidth: 280,
-      }}
-    >
-      {rank.popular && (
-        <div
-          style={{
-            position: "absolute",
-            top: 16,
-            right: -30,
-            background: rank.color,
-            color: "#000",
-            fontSize: 11,
-            fontWeight: 700,
-            padding: "4px 36px",
-            transform: "rotate(45deg)",
-            fontFamily: "'Chakra Petch', sans-serif",
-            textTransform: "uppercase",
-            letterSpacing: 1.5,
-            zIndex: 2,
-          }}
-        >
-          Popular
-        </div>
-      )}
+  const isUrl = rank.icon.startsWith("http");
+  const iconHTML = isUrl
+    ? `<img src="${rank.icon}" alt="${rank.name}" style="width:48px;height:48px;object-fit:contain;">`
+    : rank.icon;
 
-      {/* Top glow line */}
-      <div
-        style={{
-          height: 3,
-          background: `linear-gradient(90deg, transparent, ${rank.color}, transparent)`,
-          opacity: hovered ? 1 : 0.5,
-          transition: "opacity 0.3s",
-        }}
-      />
+  const featuresHTML = rank.features
+    .map(f => `<div class="feature-item"><span class="feature-dot">✦</span>${f}</div>`)
+    .join("");
 
-      {/* Header */}
-      <div style={{ padding: "32px 28px 0", textAlign: "center" }}>
-        <div
-          style={{
-            fontSize: 48,
-            marginBottom: 12,
-            filter: hovered ? `drop-shadow(0 0 12px ${rank.color}88)` : "none",
-            transition: "filter 0.3s",
-          }}
-        >
-          {rank.icon.startsWith("http") ? (
-            <img
-              src={rank.icon}
-              alt={rank.name}
-              style={{ width: 48, height: 48, objectFit: "contain" }}
-            />
-          ) : (
-            rank.icon
-          )}
-        </div>
-        <h3
-          style={{
-            fontFamily: "'Exo 2', sans-serif",
-            fontSize: 26,
-            fontWeight: 800,
-            color: rank.color,
-            margin: 0,
-            textTransform: "uppercase",
-            letterSpacing: 3,
-          }}
-        >
-          {rank.name}
-        </h3>
-        <p
-          style={{
-            fontFamily: "'Chakra Petch', sans-serif",
-            color: "rgba(255,255,255,0.5)",
-            fontSize: 13,
-            lineHeight: 1.6,
-            marginTop: 10,
-            minHeight: 40,
-          }}
-        >
-          {rank.description}
-        </p>
-      </div>
+  const btnClass = rank.popular ? "filled" : "outline";
 
-      {/* Price */}
-      <div style={{ textAlign: "center", padding: "20px 28px" }}>
-        <span
-          style={{
-            fontFamily: "'Exo 2', sans-serif",
-            fontSize: 42,
-            fontWeight: 900,
-            color: "#fff",
-            letterSpacing: -1,
-          }}
-        >
-          ${rank.price.toFixed(2)}
-        </span>
-        <span
-          style={{
-            fontFamily: "'Chakra Petch', sans-serif",
-            fontSize: 14,
-            color: "rgba(255,255,255,0.35)",
-            marginLeft: 4,
-          }}
-        >
-          USD
-        </span>
-      </div>
-
-      {/* Divider */}
-      <div
-        style={{
-          height: 1,
-          margin: "0 28px",
-          background: `linear-gradient(90deg, transparent, ${rank.color}33, transparent)`,
-        }}
-      />
-
-      {/* Features */}
-      <div style={{ padding: "20px 28px", flex: 1 }}>
-        {rank.features.map((f, i) => (
-          <div
-            key={i}
-            style={{
-              display: "flex",
-              alignItems: "flex-start",
-              gap: 10,
-              marginBottom: 10,
-              fontFamily: "'Chakra Petch', sans-serif",
-              fontSize: 13.5,
-              color: "rgba(255,255,255,0.7)",
-              lineHeight: 1.4,
-            }}
-          >
-            <span style={{ color: rank.color, fontSize: 14, flexShrink: 0, marginTop: 1 }}>
-              ✦
-            </span>
-            {f}
-          </div>
-        ))}
-      </div>
-
-      {/* Button */}
-      <div style={{ padding: "0 28px 28px" }}>
-        <button
-          style={{
-            width: "100%",
-            padding: "14px 0",
-            background: rank.popular
-              ? `linear-gradient(135deg, ${rank.color}, ${rank.color}CC)`
-              : "transparent",
-            border: rank.popular ? "none" : `1.5px solid ${rank.color}88`,
-            borderRadius: 10,
-            color: rank.popular ? "#000" : rank.color,
-            fontFamily: "'Exo 2', sans-serif",
-            fontSize: 15,
-            fontWeight: 700,
-            textTransform: "uppercase",
-            letterSpacing: 2,
-            cursor: "pointer",
-            transition: "all 0.3s",
-            boxShadow: rank.popular ? `0 4px 20px ${rank.color}44` : "none",
-          }}
-          onMouseOver={(e) => {
-            if (!rank.popular) {
-              e.target.style.background = `${rank.color}18`;
-            }
-          }}
-          onMouseOut={(e) => {
-            if (!rank.popular) {
-              e.target.style.background = "transparent";
-            }
-          }}
-        >
-          Purchase Rank
-        </button>
-      </div>
+  card.innerHTML = `
+    ${rank.popular ? '<div class="popular-badge">Popular</div>' : ''}
+    <div class="card-glow"></div>
+    <div class="card-header">
+      <div class="card-icon">${iconHTML}</div>
+      <h3 class="card-name">${rank.name}</h3>
+      <p class="card-desc">${rank.description}</p>
     </div>
-  );
-}
-
-export default function LightCitySMPStore() {
-  const [scrollY, setScrollY] = useState(0);
-
-  useEffect(() => {
-    const link = document.createElement("link");
-    link.href = FONT_URL;
-    link.rel = "stylesheet";
-    document.head.appendChild(link);
-
-    const style = document.createElement("style");
-    style.textContent = `
-      @keyframes fadeSlideUp {
-        from { opacity: 0; transform: translateY(40px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-      @keyframes glow {
-        0%, 100% { text-shadow: 0 0 20px rgba(79,195,247,0.3), 0 0 40px rgba(79,195,247,0.1); }
-        50% { text-shadow: 0 0 30px rgba(79,195,247,0.5), 0 0 60px rgba(79,195,247,0.2); }
-      }
-      @keyframes shimmer {
-        0% { background-position: -200% 0; }
-        100% { background-position: 200% 0; }
-      }
-      @keyframes float {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-6px); }
-      }
-      * { box-sizing: border-box; margin: 0; padding: 0; }
-      body { background: #070B14; }
-      ::-webkit-scrollbar { width: 6px; }
-      ::-webkit-scrollbar-track { background: #0a0e1a; }
-      ::-webkit-scrollbar-thumb { background: #1a2040; border-radius: 3px; }
-    `;
-    document.head.appendChild(style);
-    return () => {
-      document.head.removeChild(link);
-      document.head.removeChild(style);
-    };
-  }, []);
-
-  return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "linear-gradient(180deg, #070B14 0%, #0D1225 30%, #0A0F1E 70%, #070B14 100%)",
-        color: "#fff",
-        position: "relative",
-        overflow: "hidden",
-      }}
-    >
-      <Particles />
-
-      {/* Background decoration */}
-      <div
-        style={{
-          position: "fixed",
-          top: "-30%",
-          left: "-10%",
-          width: "50%",
-          height: "60%",
-          background: "radial-gradient(ellipse, rgba(79,195,247,0.03) 0%, transparent 70%)",
-          pointerEvents: "none",
-        }}
-      />
-      <div
-        style={{
-          position: "fixed",
-          bottom: "-20%",
-          right: "-10%",
-          width: "50%",
-          height: "50%",
-          background: "radial-gradient(ellipse, rgba(255,215,0,0.02) 0%, transparent 70%)",
-          pointerEvents: "none",
-        }}
-      />
-
-      {/* NAV */}
-      <nav
-        style={{
-          position: "relative",
-          zIndex: 10,
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          padding: "20px 40px",
-          borderBottom: "1px solid rgba(255,255,255,0.04)",
-          backdropFilter: "blur(10px)",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <div
-            style={{
-              width: 36,
-              height: 36,
-              borderRadius: 8,
-              background: "linear-gradient(135deg, #4FC3F7, #FFD700)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 18,
-            }}
-          >
-            ⚡
-          </div>
-          <span
-            style={{
-              fontFamily: "'Exo 2', sans-serif",
-              fontSize: 18,
-              fontWeight: 800,
-              letterSpacing: 2,
-              textTransform: "uppercase",
-            }}
-          >
-            {STORE_CONFIG.serverName}
-          </span>
-          <span
-            style={{
-              fontFamily: "'Chakra Petch', sans-serif",
-              fontSize: 11,
-              color: "#4FC3F7",
-              background: "rgba(79,195,247,0.1)",
-              padding: "3px 10px",
-              borderRadius: 20,
-              fontWeight: 600,
-              letterSpacing: 1,
-            }}
-          >
-            {STORE_CONFIG.season}
-          </span>
-        </div>
-        <a
-          href={STORE_CONFIG.discordLink}
-          style={{
-            fontFamily: "'Chakra Petch', sans-serif",
-            fontSize: 13,
-            color: "rgba(255,255,255,0.5)",
-            textDecoration: "none",
-            padding: "8px 20px",
-            border: "1px solid rgba(255,255,255,0.08)",
-            borderRadius: 8,
-            transition: "all 0.3s",
-          }}
-          onMouseOver={(e) => {
-            e.target.style.borderColor = "rgba(255,255,255,0.2)";
-            e.target.style.color = "#fff";
-          }}
-          onMouseOut={(e) => {
-            e.target.style.borderColor = "rgba(255,255,255,0.08)";
-            e.target.style.color = "rgba(255,255,255,0.5)";
-          }}
-        >
-          Discord
-        </a>
-      </nav>
-
-      {/* HERO */}
-      <div
-        style={{
-          position: "relative",
-          zIndex: 5,
-          textAlign: "center",
-          padding: "80px 20px 20px",
-        }}
-      >
-        <div
-          style={{
-            fontFamily: "'Chakra Petch', sans-serif",
-            fontSize: 12,
-            fontWeight: 600,
-            color: "#4FC3F7",
-            textTransform: "uppercase",
-            letterSpacing: 6,
-            marginBottom: 20,
-            animation: "fadeSlideUp 0.6s ease both",
-          }}
-        >
-          Official Store
-        </div>
-        <h1
-          style={{
-            fontFamily: "'Exo 2', sans-serif",
-            fontSize: "clamp(36px, 6vw, 72px)",
-            fontWeight: 900,
-            lineHeight: 1.1,
-            textTransform: "uppercase",
-            letterSpacing: 4,
-            animation: "fadeSlideUp 0.6s ease 0.1s both, glow 3s ease-in-out infinite",
-            background: "linear-gradient(135deg, #fff 30%, #4FC3F7 70%, #FFD700)",
-            backgroundSize: "200% auto",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            backgroundClip: "text",
-          }}
-        >
-          Choose Your Rank
-        </h1>
-        <p
-          style={{
-            fontFamily: "'Chakra Petch', sans-serif",
-            fontSize: 16,
-            color: "rgba(255,255,255,0.4)",
-            maxWidth: 480,
-            margin: "16px auto 0",
-            lineHeight: 1.6,
-            animation: "fadeSlideUp 0.6s ease 0.2s both",
-          }}
-        >
-          {STORE_CONFIG.tagline}
-        </p>
-      </div>
-
-      {/* RANK CARDS */}
-      <div
-        style={{
-          position: "relative",
-          zIndex: 5,
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "center",
-          gap: 24,
-          padding: "50px 24px 80px",
-          maxWidth: 1300,
-          margin: "0 auto",
-        }}
-      >
-        {STORE_CONFIG.ranks.map((rank, i) => (
-          <RankCard key={rank.id} rank={rank} index={i} />
-        ))}
-      </div>
-
-      {/* FAQ / INFO */}
-      <div
-        style={{
-          position: "relative",
-          zIndex: 5,
-          maxWidth: 700,
-          margin: "0 auto",
-          padding: "0 24px 100px",
-          textAlign: "center",
-        }}
-      >
-        <div
-          style={{
-            height: 1,
-            background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent)",
-            marginBottom: 60,
-          }}
-        />
-        <h2
-          style={{
-            fontFamily: "'Exo 2', sans-serif",
-            fontSize: 22,
-            fontWeight: 700,
-            marginBottom: 20,
-            letterSpacing: 2,
-            textTransform: "uppercase",
-            color: "rgba(255,255,255,0.8)",
-          }}
-        >
-          How It Works
-        </h2>
-        {[
-          { step: "01", title: "Choose your rank", desc: "Pick the rank that fits your playstyle" },
-          { step: "02", title: "Complete payment", desc: "Secure checkout via our payment provider" },
-          { step: "03", title: "Get your perks", desc: "Rank applied automatically — start playing!" },
-        ].map((item, i) => (
-          <div
-            key={i}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 20,
-              padding: "16px 0",
-              borderBottom: "1px solid rgba(255,255,255,0.03)",
-              textAlign: "left",
-            }}
-          >
-            <span
-              style={{
-                fontFamily: "'Exo 2', sans-serif",
-                fontSize: 28,
-                fontWeight: 900,
-                color: "rgba(79,195,247,0.15)",
-                minWidth: 50,
-              }}
-            >
-              {item.step}
-            </span>
-            <div>
-              <div
-                style={{
-                  fontFamily: "'Exo 2', sans-serif",
-                  fontWeight: 700,
-                  fontSize: 15,
-                  color: "rgba(255,255,255,0.85)",
-                  marginBottom: 2,
-                }}
-              >
-                {item.title}
-              </div>
-              <div
-                style={{
-                  fontFamily: "'Chakra Petch', sans-serif",
-                  fontSize: 13,
-                  color: "rgba(255,255,255,0.35)",
-                }}
-              >
-                {item.desc}
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* FOOTER */}
-      <footer
-        style={{
-          position: "relative",
-          zIndex: 5,
-          borderTop: "1px solid rgba(255,255,255,0.04)",
-          padding: "24px 40px",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          fontFamily: "'Chakra Petch', sans-serif",
-          fontSize: 12,
-          color: "rgba(255,255,255,0.25)",
-        }}
-      >
-        <span>© 2026 {STORE_CONFIG.serverName}. All rights reserved.</span>
-        <span>Not affiliated with Mojang Studios</span>
-      </footer>
+    <div class="card-price">
+      <span class="price-amount">$${rank.price.toFixed(2)}</span>
+      <span class="price-currency">USD</span>
     </div>
-  );
+    <div class="card-divider"></div>
+    <div class="card-features">${featuresHTML}</div>
+    <div class="card-btn-wrap">
+      <button class="card-btn ${btnClass}">Purchase Rank</button>
+    </div>
+  `;
+
+  return card;
 }
+
+// ── PARTICLES ──────────────────────────────────────────────────
+function initParticles() {
+  const canvas = document.getElementById("particles");
+  const ctx = canvas.getContext("2d");
+  let particles = [];
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener("resize", resize);
+
+  for (let i = 0; i < 60; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      size: Math.random() * 2 + 0.5,
+      speedY: -(Math.random() * 0.3 + 0.1),
+      speedX: (Math.random() - 0.5) * 0.2,
+      opacity: Math.random() * 0.5 + 0.1,
+    });
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(79, 195, 247, ${p.opacity})`;
+      ctx.fill();
+      p.x += p.speedX;
+      p.y += p.speedY;
+      if (p.y < -10) {
+        p.y = canvas.height + 10;
+        p.x = Math.random() * canvas.width;
+      }
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+</script>
+</body>
+</html>
